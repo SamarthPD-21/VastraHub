@@ -1,0 +1,166 @@
+/* ============================================
+   VastraHub — Global Styles & CSS Variables
+   ============================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap');
+
+/* ─── Light Theme Tokens ─── */
+:root {
+  /* Brand colours */
+  --color-primary: #c8421a;        /* rich saffron-red */
+  --color-primary-hover: #a83515;
+  --color-primary-light: #fef0eb;
+  --color-accent: #d4a853;         /* warm gold */
+  --color-accent-hover: #b8923e;
+
+  /* Backgrounds */
+  --color-bg: #ffffff;
+  --color-bg-secondary: #f9f7f4;
+  --color-bg-card: #ffffff;
+  --color-bg-overlay: rgba(0, 0, 0, 0.45);
+
+  /* Navbar */
+  --color-nav-bg: rgba(255, 255, 255, 0.97);
+  --color-nav-bg-scrolled: rgba(255, 255, 255, 0.98);
+  --color-nav-border: rgba(0, 0, 0, 0.08);
+
+  /* Text */
+  --color-text: #1a1a1a;
+  --color-text-secondary: #555;
+  --color-text-muted: #888;
+  --color-text-inverse: #ffffff;
+
+  /* Borders / Dividers */
+  --color-border: #e5e0da;
+  --color-border-light: #f0ece6;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 4px rgba(0,0,0,0.06);
+  --shadow-md: 0 4px 20px rgba(0,0,0,0.10);
+  --shadow-lg: 0 8px 40px rgba(0,0,0,0.14);
+  --shadow-nav: 0 2px 16px rgba(0,0,0,0.09);
+
+  /* Radii */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-full: 9999px;
+
+  /* Fonts */
+  --font-heading: 'Outfit', sans-serif;
+  --font-body: 'Inter', sans-serif;
+
+  /* Transitions */
+  --transition-fast: 150ms ease;
+  --transition-base: 250ms ease;
+  --transition-slow: 400ms ease;
+
+  /* Z-indices */
+  --z-navbar: 1000;
+  --z-dropdown: 1100;
+  --z-modal: 1300;
+  --z-toast: 1400;
+}
+
+/* ─── Dark Theme Tokens ─── */
+[data-theme="dark"] {
+  --color-primary: #e8603a;
+  --color-primary-hover: #f07452;
+  --color-primary-light: #2d1810;
+  --color-accent: #d4a853;
+
+  --color-bg: #0f0f0f;
+  --color-bg-secondary: #171717;
+  --color-bg-card: #1c1c1c;
+
+  --color-nav-bg: rgba(15, 15, 15, 0.97);
+  --color-nav-bg-scrolled: rgba(12, 12, 12, 0.99);
+  --color-nav-border: rgba(255,255,255,0.07);
+
+  --color-text: #f0ece6;
+  --color-text-secondary: #b0a89e;
+  --color-text-muted: #777;
+  --color-text-inverse: #0f0f0f;
+
+  --color-border: #2a2a2a;
+  --color-border-light: #222;
+
+  --shadow-sm: 0 1px 4px rgba(0,0,0,0.3);
+  --shadow-md: 0 4px 20px rgba(0,0,0,0.5);
+  --shadow-lg: 0 8px 40px rgba(0,0,0,0.6);
+  --shadow-nav: 0 2px 16px rgba(0,0,0,0.5);
+}
+
+/* ─── CSS Reset ─── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  line-height: 1.6;
+  transition: background-color var(--transition-base), color var(--transition-base);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  line-height: 1.2;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+ul, ol {
+  list-style: none;
+}
+
+input, textarea, select {
+  font-family: inherit;
+}
+
+/* ─── Utility Classes ─── */
+.container {
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 1.25rem;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--color-bg-secondary); }
+::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--color-text-muted); }
