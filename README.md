@@ -40,7 +40,7 @@ The entire application is **100% frontend** — there is no backend, no database
 | **Deployment Target** | GitHub Pages |
 | **Backend** | ❌ None — 100% static |
 | **Purpose** | Recruiter / portfolio showcase |
-| **Language Breakdown** | JavaScript 96.8% · CSS 2.7% · HTML 0.5% |
+| **Language Breakdown** | JavaScript 93.8% · CSS 5.7% · HTML 0.5% |
 
 ---
 
