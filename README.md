@@ -415,7 +415,6 @@ import { HashRouter } from 'react-router-dom';
 | **Cart / Wishlist** | State persists via `localStorage`. Clears on browser data wipe. |
 | **SEO** | Single-page app — no SSR, no per-route meta tags (title set via `document.title`). |
 | **Images** | Paths must be relative or prefixed with `import.meta.env.BASE_URL` for GitHub Pages subdirectory compatibility. |
-| **Search** | Searches over local JSON only — no server-side full-text search. |
 
 ---
 
@@ -435,14 +434,32 @@ import { HashRouter } from 'react-router-dom';
 
 ---
 
+---
+
 ## 📄 License
 
-Distributed under the **Apache License 2.0**. See [`LICENSE`](./LICENSE) for full details.
+This project is distributed under the **Apache License 2.0**.  
+For full details, please refer to the [`LICENSE`](./LICENSE) file.
 
 ---
 
+## 🙌 Credits & Acknowledgements
+
+This project wouldn’t be possible without the amazing resources below:
+
+- 🎨 Icons by [Bootstrap Icons](https://icons.getbootstrap.com/)
+- 🖼️ Graphics from [Flaticon](https://www.flaticon.com/)
+
+---
+
+## ❤️ About
+
 <p align="center">
-  Made with ❤️ for the Indian wardrobe · <a href="https://github.com/TacticalReader/VastraHub">VastraHub</a>
-  also special thanks to https://icons.getbootstrap.com/
-                         https://www.flaticon.com/
+  Made with ❤️ for the Indian wardrobe  
 </p>
+
+<p align="center">
+  🔗 <a href="https://github.com/TacticalReader/VastraHub"><strong>Explore VastraHub</strong></a>
+</p>
+
+---
