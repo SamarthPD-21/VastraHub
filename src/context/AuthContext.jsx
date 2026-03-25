@@ -30,6 +30,17 @@ export function AuthProvider({ children }) {
     }
   }, [user]);
 
+  // Sync across tabs
+  useEffect(() => {
+    const handler = (e) => {
+      if (e.key === STORAGE_KEY) {
+        try { setUser(JSON.parse(e.newValue) ?? null); } catch { /* ignore */ }
+      }
+    };
+    window.addEventListener('storage', handler);
+    return () => window.removeEventListener('storage', handler);
+  }, []);
+
   const login = useCallback((email, _password) => {
     // UI-only auth — accepts any credentials
     // Note: This is a UI-only auth simulation for portfolio purposes
