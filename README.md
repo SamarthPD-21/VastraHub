@@ -444,4 +444,6 @@ Distributed under the **Apache License 2.0**. See [`LICENSE`](./LICENSE) for ful
 
 <p align="center">
   Made with ❤️ for the Indian wardrobe · <a href="https://github.com/TacticalReader/VastraHub">VastraHub</a>
+  also special thanks to https://icons.getbootstrap.com/
+                         https://www.flaticon.com/
 </p>
