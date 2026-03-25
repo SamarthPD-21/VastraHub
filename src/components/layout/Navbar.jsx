@@ -12,8 +12,6 @@ import {
   HiX,
   HiOutlineLogout,
   HiChevronDown,
-  HiOutlineHome,      // ← NEW
-  HiOutlineTruck,     // ← NEW
 } from 'react-icons/hi';
 
 import { useAuth } from '../../hooks/useAuth';
@@ -80,21 +78,21 @@ const NAV_LINKS = [
 
 // ─── Animation Variants ───────────────────────────────────────────────────────
 const dropdownVariants = {
-  hidden: { opacity: 0, y: -8, scale: 0.97 },
-  visible: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.18, ease: 'easeOut' } },
-  exit: { opacity: 0, y: -6, scale: 0.97, transition: { duration: 0.12 } },
+  hidden:  { opacity: 0, y: -8, scale: 0.97 },
+  visible: { opacity: 1, y: 0,  scale: 1,   transition: { duration: 0.18, ease: 'easeOut' } },
+  exit:    { opacity: 0, y: -6, scale: 0.97, transition: { duration: 0.12 } },
 };
 
 const mobileMenuVariants = {
-  hidden: { opacity: 0, x: '100%' },
-  visible: { opacity: 1, x: '0%', transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1] } },
-  exit: { opacity: 0, x: '100%', transition: { duration: 0.22 } },
+  hidden:  { opacity: 0, x: '100%' },
+  visible: { opacity: 1, x: '0%',  transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1] } },
+  exit:    { opacity: 0, x: '100%', transition: { duration: 0.22 } },
 };
 
 const searchVariants = {
-  hidden: { opacity: 0, y: -16, scaleY: 0.92 },
-  visible: { opacity: 1, y: 0, scaleY: 1, transition: { duration: 0.22 } },
-  exit: { opacity: 0, y: -10, scaleY: 0.95, transition: { duration: 0.15 } },
+  hidden:  { opacity: 0, y: -16, scaleY: 0.92 },
+  visible: { opacity: 1, y: 0,   scaleY: 1,   transition: { duration: 0.22 } },
+  exit:    { opacity: 0, y: -10, scaleY: 0.95, transition: { duration: 0.15 } },
 };
 
 // ─── Icon Badge ───────────────────────────────────────────────────────────────
@@ -116,6 +114,7 @@ function SearchOverlay({ onClose }) {
   const { closeSearch } = useSearchContext();
   const ref = useRef(null);
 
+  // Close on Escape
   useEffect(() => {
     const handler = (e) => {
       if (e.key === 'Escape') {
@@ -127,10 +126,15 @@ function SearchOverlay({ onClose }) {
     return () => window.removeEventListener('keydown', handler);
   }, [closeSearch, onClose]);
 
+  // Close when clicking outside
   useEffect(() => {
     const handler = (e) => {
+      // If the click is outside the search bar area
       if (ref.current && !ref.current.contains(e.target)) {
+        // Also ensure we're not clicking the search toggle button itself,
+        // otherwise it would close and then likely re-open immediately
         if (e.target.closest('#nav-search-btn')) return;
+        
         closeSearch();
         onClose?.();
       }
@@ -168,7 +172,7 @@ function DesktopNavItem({ link }) {
   const timerRef = useRef(null);
   const navigate = useNavigate();
 
-  const openMenu = () => { clearTimeout(timerRef.current); setOpen(true); };
+  const openMenu  = () => { clearTimeout(timerRef.current); setOpen(true); };
   const closeMenu = () => { timerRef.current = setTimeout(() => setOpen(false), 120); };
 
   if (!link.children) {
@@ -253,6 +257,7 @@ function DesktopNavItem({ link }) {
               ))}
             </div>
 
+            {/* Shop all link at bottom */}
             <div
               className="mt-4 border-t pt-3"
               style={{ borderColor: 'var(--color-border-light)' }}
@@ -279,6 +284,7 @@ function UserDropdown({ user, isLoggedIn, logout, onOpenLogin, onOpenSignup }) {
   const ref = useRef(null);
   const navigate = useNavigate();
 
+  // Close when clicking outside
   useEffect(() => {
     const handler = (e) => { if (!ref.current?.contains(e.target)) setOpen(false); };
     document.addEventListener('mousedown', handler);
@@ -402,6 +408,7 @@ function MobileMenu({ onClose, onOpenLogin, onOpenSignup }) {
 
   return (
     <>
+      {/* Backdrop */}
       <motion.div
         key="backdrop"
         initial={{ opacity: 0 }}
@@ -411,6 +418,7 @@ function MobileMenu({ onClose, onOpenLogin, onOpenSignup }) {
         className="fixed inset-0 z-[var(--z-navbar)] bg-black/50 backdrop-blur-sm"
       />
 
+      {/* Drawer */}
       <motion.div
         key="drawer"
         variants={mobileMenuVariants}
@@ -424,6 +432,7 @@ function MobileMenu({ onClose, onOpenLogin, onOpenSignup }) {
           boxShadow: 'var(--shadow-lg)',
         }}
       >
+        {/* Header */}
         <div
           className="flex items-center justify-between px-5 py-4 border-b shrink-0"
           style={{ borderColor: 'var(--color-border)' }}
@@ -446,6 +455,7 @@ function MobileMenu({ onClose, onOpenLogin, onOpenSignup }) {
           </button>
         </div>
 
+        {/* Navigation */}
         <nav className="flex-1 px-4 py-4 space-y-1">
           {NAV_LINKS.map((link) => {
             if (!link.children) {
@@ -455,15 +465,13 @@ function MobileMenu({ onClose, onOpenLogin, onOpenSignup }) {
                   to={link.to}
                   onClick={onClose}
                   className={({ isActive }) =>
-                    `flex items-center px-3 py-3 rounded-lg text-sm font-medium transition-colors ${isActive
-                      ? 'text-[color:var(--color-primary)] bg-[color:var(--color-primary-light)]'
-                      : 'text-[color:var(--color-text)] hover:bg-[color:var(--color-bg-secondary)]'
+                    `flex items-center px-3 py-3 rounded-lg text-sm font-medium transition-colors ${
+                      isActive
+                        ? 'text-[color:var(--color-primary)] bg-[color:var(--color-primary-light)]'
+                        : 'text-[color:var(--color-text)] hover:bg-[color:var(--color-bg-secondary)]'
                     }`
                   }
                 >
-                  {/* NEW: Icons for flat mobile menu items */}
-                  {link.label === 'Home' && <HiOutlineHome size={18} className="mr-3" />}
-                  {link.label === 'Shop All' && <HiOutlineShoppingBag size={18} className="mr-3" />}
                   {link.label}
                 </NavLink>
               );
@@ -506,9 +514,10 @@ function MobileMenu({ onClose, onOpenLogin, onOpenSignup }) {
                               to={item.to}
                               onClick={onClose}
                               className={({ isActive }) =>
-                                `block px-3 py-2.5 rounded-lg text-sm transition-all duration-200 ${isActive
-                                  ? 'text-[color:var(--color-primary)] font-medium bg-[color:var(--color-primary-light)]'
-                                  : 'text-[color:var(--color-text-secondary)] hover:bg-[color:var(--color-bg-secondary)] hover:translate-x-1 hover:text-[color:var(--color-primary)]'
+                                `block px-3 py-2.5 rounded-lg text-sm transition-all duration-200 ${
+                                  isActive
+                                    ? 'text-[color:var(--color-primary)] font-medium bg-[color:var(--color-primary-light)]'
+                                    : 'text-[color:var(--color-text-secondary)] hover:bg-[color:var(--color-bg-secondary)] hover:translate-x-1 hover:text-[color:var(--color-primary)]'
                                 }`
                               }
                             >
@@ -525,6 +534,7 @@ function MobileMenu({ onClose, onOpenLogin, onOpenSignup }) {
           })}
         </nav>
 
+        {/* Bottom Auth section */}
         <div
           className="mt-auto px-4 py-4 border-t shrink-0"
           style={{ borderColor: 'var(--color-border)' }}
@@ -582,12 +592,12 @@ function MobileMenu({ onClose, onOpenLogin, onOpenSignup }) {
 // ─── Main Navbar ──────────────────────────────────────────────────────────────
 export default function Navbar() {
   const { user, isLoggedIn, logout } = useAuth();
-  const { totalItems: cartCount } = useCart();
+  const { totalItems: cartCount }     = useCart();
   const { totalItems: wishlistCount } = useWishlist();
-  const { isDark, toggleTheme } = useThemeContext();
+  const { isDark, toggleTheme }       = useThemeContext();
   const { isOpen: isSearchOpen, openSearch } = useSearchContext();
-  const scrollY = useScrollPosition();
-  const isMobile = useMediaQuery('(max-width: 768px)');
+  const scrollY    = useScrollPosition();
+  const isMobile   = useMediaQuery('(max-width: 768px)');
   const [mobileOpen, setMobileOpen] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
   const [loginOpen, setLoginOpen] = useState(false);
@@ -595,11 +605,13 @@ export default function Navbar() {
 
   const isScrolled = scrollY > 12;
 
+  // Prevent body scroll when mobile menu is open
   useEffect(() => {
     document.body.style.overflow = mobileOpen || cartOpen ? 'hidden' : '';
     return () => { document.body.style.overflow = ''; };
   }, [mobileOpen, cartOpen]);
 
+  // Close mobile menu on window resize to desktop
   useEffect(() => {
     if (!isMobile && mobileOpen) setMobileOpen(false);
   }, [isMobile]);
@@ -623,19 +635,18 @@ export default function Navbar() {
           WebkitBackdropFilter: 'blur(12px)',
         }}
       >
-        {/* Top strip — promo bar with NEW truck icon */}
+        {/* Top strip — optional promo bar */}
         <div
           className="hidden md:flex items-center justify-center py-1.5 text-xs font-medium tracking-wide gap-2"
           style={{ background: 'var(--color-primary)', color: '#fff' }}
         >
           <img src="https://flagcdn.com/w20/in.png" srcSet="https://flagcdn.com/w40/in.png 2x" width="20" alt="India flag" className="inline-block rounded-sm shadow-sm" />
-          <HiOutlineTruck size={14} className="inline" /> {/* ← NEW icon */}
           Free shipping on orders above ₹999 &nbsp;·&nbsp; Use code{' '}
           <strong className="ml-1">VASTRA10</strong>&nbsp;for 10% off
         </div>
 
         <div className="container relative flex h-16 items-center gap-4">
-          {/* Logo */}
+          {/* ── Logo ── */}
           <Link
             to={ROUTES.HOME}
             id="nav-logo"
@@ -647,6 +658,7 @@ export default function Navbar() {
             <span style={{ color: 'var(--color-text)', fontFamily: 'var(--font-syne)', fontWeight: '800', letterSpacing: '-0.03em', marginLeft: '1px' }}>Hub</span>
           </Link>
 
+          {/* ── Desktop Nav Links ── */}
           {!isMobile && (
             <nav aria-label="Main navigation" className="flex items-center gap-7">
               {NAV_LINKS.map((link) => (
@@ -655,9 +667,10 @@ export default function Navbar() {
             </nav>
           )}
 
+          {/* ── Spacer ── */}
           <div className="flex-1" />
 
-          {/* Right Action Icons – added Wishlist on mobile + truck in promo */}
+          {/* ── Right Action Icons ── */}
           <div className="flex items-center gap-1.5">
             {/* Search */}
             <button
@@ -682,8 +695,8 @@ export default function Navbar() {
                 <motion.span
                   key={isDark ? 'sun' : 'moon'}
                   initial={{ rotate: -30, opacity: 0 }}
-                  animate={{ rotate: 0, opacity: 1 }}
-                  exit={{ rotate: 30, opacity: 0 }}
+                  animate={{ rotate: 0,   opacity: 1 }}
+                  exit={{ rotate: 30,  opacity: 0 }}
                   transition={{ duration: 0.2 }}
                   className="flex"
                 >
@@ -692,17 +705,19 @@ export default function Navbar() {
               </AnimatePresence>
             </button>
 
-            {/* Wishlist – NOW visible on mobile too */}
-            <Link
-              id="nav-wishlist-btn"
-              to={ROUTES.WISHLIST}
-              aria-label={`Wishlist (${wishlistCount} items)`}
-              className="relative flex h-9 w-9 items-center justify-center rounded-full transition-colors hover:bg-[color:var(--color-bg-secondary)]"
-              style={{ color: 'var(--color-text)' }}
-            >
-              <HiOutlineHeart size={21} />
-              <IconBadge count={wishlistCount} />
-            </Link>
+            {/* Wishlist */}
+            {!isMobile && (
+              <Link
+                id="nav-wishlist-btn"
+                to={ROUTES.WISHLIST}
+                aria-label={`Wishlist (${wishlistCount} items)`}
+                className="relative flex h-9 w-9 items-center justify-center rounded-full transition-colors hover:bg-[color:var(--color-bg-secondary)]"
+                style={{ color: 'var(--color-text)' }}
+              >
+                <HiOutlineHeart size={21} />
+                <IconBadge count={wishlistCount} />
+              </Link>
+            )}
 
             {/* Cart */}
             <button
@@ -718,12 +733,10 @@ export default function Navbar() {
 
             {/* User (desktop only) */}
             {!isMobile && (
-              <UserDropdown
-                user={user}
-                isLoggedIn={isLoggedIn}
-                logout={logout}
-                onOpenLogin={() => setLoginOpen(true)}
-                onOpenSignup={() => setSignupOpen(true)}
+              <UserDropdown 
+                user={user} isLoggedIn={isLoggedIn} logout={logout} 
+                onOpenLogin={() => setLoginOpen(true)} 
+                onOpenSignup={() => setSignupOpen(true)} 
               />
             )}
 
@@ -742,22 +755,29 @@ export default function Navbar() {
             )}
           </div>
 
+          {/* ── Search Overlay (attached to nav bottom) ── */}
           <AnimatePresence>
             {isSearchOpen && <SearchOverlay />}
           </AnimatePresence>
         </div>
       </header>
 
+      {/* ── Mobile Menu Drawer ── */}
       <AnimatePresence>
         {mobileOpen && <MobileMenu onClose={() => setMobileOpen(false)} onOpenLogin={() => setLoginOpen(true)} onOpenSignup={() => setSignupOpen(true)} />}
       </AnimatePresence>
 
+      {/* ── Auth Modals ── */}
       <LoginModal isOpen={loginOpen} onClose={() => setLoginOpen(false)} onSwitchToSignup={() => { setLoginOpen(false); setSignupOpen(true); }} />
       <SignupModal isOpen={signupOpen} onClose={() => setSignupOpen(false)} onSwitchToLogin={() => { setSignupOpen(false); setLoginOpen(true); }} />
 
+      {/* ── Slide-in Cart Drawer ── */}
       <CartDrawer isOpen={cartOpen} onClose={() => setCartOpen(false)} />
 
+      {/* ── Spacer to push page content below fixed navbar ── */}
+      {/* spacer height: 64px (mobile) or 96px (desktop with promo strip) */}
       <div className="h-16 md:h-24" aria-hidden="true" />
     </>
   );
 }
+                                                   
