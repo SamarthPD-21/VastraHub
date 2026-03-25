@@ -40,7 +40,7 @@ The entire application is **100% frontend** — there is no backend, no database
 | **Deployment Target** | GitHub Pages |
 | **Backend** | ❌ None — 100% static |
 | **Purpose** | Recruiter / portfolio showcase |
-| **Language Breakdown** | JavaScript 93.8% · CSS 5.7% · HTML 0.5% |
+| **Language Breakdown** | JavaScript 96.8% · CSS 2.7% · HTML 0.5% |
 
 ---
 
@@ -83,6 +83,7 @@ All authentication features are **cosmetic and purely client-side**. No real cre
 | Size Selector | Static UI — no inventory system |
 | Sort & Filter | By price, category, type — fully client-side |
 | Related Products | Filtered from the same category in JSON |
+| Smart Pagination | 8 items (desktop) / 6 items (mobile) with ellipsis support |
 | Image Zoom | `react-medium-image-zoom` |
 | Breadcrumb Navigation | Dynamic, route-aware |
 
@@ -100,7 +101,7 @@ VastraHub features a custom-built premium CSS layer designed to wow users withou
 | **Premium Hover Effects** | Shimmer sweeps, image zooms, and subtle float animations |
 | **Dynamic Filtering** | Gender-aware category filtering for smoother navigation |
 | **Functional Size Guide** | Custom modal component for quick size reference |
-| **Smart Interface** | Auto-closing search bar and mobile-specific coupon popups |
+| **Smart Interface** | Auto-closing search bar, mobile wishlist, and dynamic shipping promo bar |
 | **Skeleton Loaders** | Fake delay + CSS skeleton shimmer |
 | **Dark / Light Mode** | CSS variables + `localStorage` preference |
 | **Responsive Design** | Tailwind CSS mobile-first breakpoints |
