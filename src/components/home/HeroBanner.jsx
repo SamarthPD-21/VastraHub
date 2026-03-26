@@ -52,8 +52,14 @@ const SLIDES = [
 
 const slideVariants = {
   enter: (dir) => ({ x: dir > 0 ? '100%' : '-100%', opacity: 0 }),
-  center: { x: 0, opacity: 1, transition: { duration: 0.55, ease: [0.25, 0.1, 0.25, 1] } },
-  exit: (dir) => ({ x: dir < 0 ? '100%' : '-100%', opacity: 0, transition: { duration: 0.45 } }),
+  center: { x: 0, opacity: 1, transition: { duration: 0.6, ease: [0.25, 0.1, 0.25, 1] } },
+  exit: (dir) => ({ x: dir < 0 ? '100%' : '-100%', opacity: 0, transition: { duration: 0.5 } }),
+};
+
+const textVariants = {
+  hidden: { opacity: 0, y: 30 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: 'easeOut' } },
+  exit: { opacity: 0, y: -20, transition: { duration: 0.3 } }
 };
 
 export default function HeroBanner() {
@@ -72,9 +78,23 @@ export default function HeroBanner() {
 
   useEffect(() => {
     if (paused) return;
-    const id = setInterval(next, 4000);
+    const id = setInterval(next, 5000);
     return () => clearInterval(id);
   }, [next, paused]);
+
+  const handleDragEnd = (e, { offset }) => {
+    const swipe = offset.x;
+    if (swipe < -50) {
+      next();
+    } else if (swipe > 50) {
+      prev();
+    }
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === 'ArrowLeft') prev();
+    if (e.key === 'ArrowRight') next();
+  };
 
   const slide = SLIDES[current];
   const textAlign = slide.align === 'center' ? 'items-center text-center' : slide.align === 'right' ? 'items-end text-right' : 'items-start text-left';
@@ -82,15 +102,20 @@ export default function HeroBanner() {
   return (
     <section
       id="hero-banner"
-      className="relative w-full overflow-hidden h-[60vh] md:h-[75vh] lg:h-[85vh] min-h-[400px] max-h-[800px]"
+      className="relative w-full overflow-hidden h-[60vh] md:h-[75vh] lg:h-[85vh] min-h-[400px] max-h-[800px] bg-black focus-ring"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
-      aria-label="Hero banner"
+      onFocus={() => setPaused(true)}
+      onBlur={() => setPaused(false)}
+      onKeyDown={handleKeyDown}
+      tabIndex={0}
+      aria-label="Hero carousel"
+      aria-roledescription="carousel"
     >
       {/* Subtle pattern overlay */}
       <div
         className="absolute inset-0 z-[1] opacity-[0.06] pointer-events-none"
-        style={{ backgroundImage: `url(\${import.meta.env.BASE_URL}assets/illustrations/hero-pattern-bg.svg)` }}
+        style={{ backgroundImage: `url(${import.meta.env.BASE_URL}assets/illustrations/hero-pattern-bg.svg)` }}
         aria-hidden="true"
       />
 
@@ -103,88 +128,118 @@ export default function HeroBanner() {
           initial="enter"
           animate="center"
           exit="exit"
-          className="absolute inset-0 z-[2]"
+          drag="x"
+          dragConstraints={{ left: 0, right: 0 }}
+          dragElastic={0.8}
+          onDragEnd={handleDragEnd}
+          className="absolute inset-0 z-[2] cursor-grab active:cursor-grabbing"
+          role="group"
+          aria-roledescription="slide"
+          aria-label={`Slide ${current + 1} of ${total}`}
         >
-          <img
+          <motion.img
             src={slide.image}
-            alt={slide.heading}
+            alt=""
             width={1440}
             height={800}
             loading={current === 0 ? 'eager' : 'lazy'}
+            fetchpriority={current === 0 ? 'high' : 'auto'}
             className="h-full w-full object-cover object-[center_20%]"
+            initial={{ scale: 1 }}
+            animate={{ scale: 1.05 }}
+            transition={{ duration: 6, ease: 'linear' }}
           />
           {/* Gradient overlay */}
           <div
             className="absolute inset-0"
             style={{ 
               background: slide.align === 'right' 
-                ? 'linear-gradient(to left, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.2) 60%, transparent 100%)'
+                ? 'linear-gradient(to left, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.3) 50%, transparent 100%)'
                 : slide.align === 'center'
-                ? 'linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.2) 50%, transparent 100%)'
-                : 'linear-gradient(to right, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.2) 60%, transparent 100%)'
+                ? 'linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.3) 50%, transparent 100%)'
+                : 'linear-gradient(to right, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.3) 50%, transparent 100%)'
             }}
           />
-          <div className="absolute inset-0 bg-black/10" />
         </motion.div>
       </AnimatePresence>
 
       {/* Text overlay */}
-      <div className={`absolute inset-0 z-[3] flex flex-col justify-center px-8 md:px-20 gap-4 ${textAlign}`}>
+      <div className={`absolute inset-0 z-[3] flex flex-col justify-center px-8 md:px-20 gap-4 pointer-events-none ${textAlign}`}>
         <AnimatePresence mode="wait">
           <motion.div
             key={slide.id}
-            initial={{ opacity: 0, y: 22 }}
-            animate={{ opacity: 1, y: 0, transition: { delay: 0.25, duration: 0.4 } }}
-            exit={{ opacity: 0, y: -10, transition: { duration: 0.2 } }}
-            className={`flex flex-col gap-3 ${textAlign}`}
+            variants={textVariants}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            className={`flex flex-col gap-4 pointer-events-auto max-w-2xl ${textAlign}`}
+            aria-live="polite"
           >
-            <h1
-              className="text-4xl font-normal leading-tight text-white md:text-6xl"
-              style={{ fontFamily: slide.font || 'var(--font-heading)', textShadow: '0 2px 12px rgba(0,0,0,0.6)' }}
+            <motion.h1
+              className="text-4xl font-normal leading-tight text-white md:text-6xl lg:text-7xl drop-shadow-xl"
+              style={{ fontFamily: slide.font || 'var(--font-heading)' }}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2, duration: 0.5 }}
             >
               {slide.heading}
-            </h1>
-            <p className="max-w-lg text-base text-white/90 md:text-lg" style={{ fontFamily: 'var(--font-body)', textShadow: '0 1px 6px rgba(0,0,0,0.6)' }}>
-              {slide.subheading}
-            </p>
-            <Link
-              to={slide.ctaLink}
-              className="btn-glow mt-4 inline-flex w-fit items-center rounded-full px-8 py-3.5 text-[15px] font-bold tracking-wide uppercase text-white shadow-lg"
-              style={{ background: 'var(--color-primary)', fontFamily: 'var(--font-syne)' }}
+            </motion.h1>
+            <motion.p 
+              className="text-base text-white/90 md:text-xl drop-shadow-md" 
+              style={{ fontFamily: 'var(--font-body)' }}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3, duration: 0.5 }}
             >
-              {slide.cta}
-            </Link>
+              {slide.subheading}
+            </motion.p>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4, duration: 0.5 }}
+            >
+              <Link
+                to={slide.ctaLink}
+                className="btn-glow mt-4 inline-flex w-fit items-center rounded-full px-8 py-3.5 text-[15px] font-bold tracking-wide uppercase text-white shadow-lg focus-ring"
+                style={{ background: 'var(--color-primary)', fontFamily: 'var(--font-syne)' }}
+              >
+                {slide.cta}
+              </Link>
+            </motion.div>
           </motion.div>
         </AnimatePresence>
       </div>
 
-      {/* Arrows */}
-      <button
-        onClick={prev}
-        aria-label="Previous slide"
-        className="absolute left-4 top-1/2 z-[4] -translate-y-1/2 flex h-10 w-10 items-center justify-center rounded-full bg-black/30 text-white backdrop-blur-sm transition hover:bg-black/50"
-      >
-        <FiChevronLeft size={22} />
-      </button>
-      <button
-        onClick={next}
-        aria-label="Next slide"
-        className="absolute right-4 top-1/2 z-[4] -translate-y-1/2 flex h-10 w-10 items-center justify-center rounded-full bg-black/30 text-white backdrop-blur-sm transition hover:bg-black/50"
-      >
-        <FiChevronRight size={22} />
-      </button>
+      {/* Controls */}
+      <div className="absolute inset-0 z-[4] pointer-events-none flex items-center justify-between px-4 md:px-8">
+        <button
+          onClick={prev}
+          aria-label="Previous slide"
+          className="pointer-events-auto flex h-12 w-12 items-center justify-center rounded-full bg-black/20 text-white backdrop-blur-md transition-all hover:bg-black/50 hover:scale-110 focus-ring"
+        >
+          <FiChevronLeft size={24} />
+        </button>
+        <button
+          onClick={next}
+          aria-label="Next slide"
+          className="pointer-events-auto flex h-12 w-12 items-center justify-center rounded-full bg-black/20 text-white backdrop-blur-md transition-all hover:bg-black/50 hover:scale-110 focus-ring"
+        >
+          <FiChevronRight size={24} />
+        </button>
+      </div>
 
       {/* Dots */}
-      <div className="absolute bottom-5 left-1/2 z-[4] flex -translate-x-1/2 gap-2">
+      <div className="absolute bottom-6 left-1/2 z-[4] flex -translate-x-1/2 gap-3">
         {SLIDES.map((_, i) => (
           <button
             key={i}
             onClick={() => goTo(i, i > current ? 1 : -1)}
             aria-label={`Go to slide ${i + 1}`}
-            className="h-2 rounded-full transition-all duration-300"
+            aria-current={i === current}
+            className="relative h-2 rounded-full transition-all duration-500 focus-ring"
             style={{
-              width: i === current ? '28px' : '8px',
-              background: i === current ? 'var(--color-primary)' : 'rgba(255,255,255,0.5)',
+              width: i === current ? '32px' : '12px',
+              background: i === current ? 'var(--color-primary)' : 'rgba(255,255,255,0.4)',
             }}
           />
         ))}
